@@ -55,14 +55,17 @@ def first_order(paths):
     unique_touch_list = np.unique([item for sublist in paths for item in sublist])
 
     # get total last touch conversion counts
-    conv_dict = {}
+    conv_dict_last = {}
+    conv_dict_first = {}
     total_conversions = 0
     for item in unique_touch_list:
-        conv_dict[item] = 0
+        conv_dict_last[item] = 0
+        conv_dict_first[item] = 0
     for path in paths:
         if 'conv' in path:
             total_conversions += 1
-            conv_dict[path[-2]] += 1
+            conv_dict_last[path[-2]] += 1
+            conv_dict_first[path[1]] += 1
 
     transitionStates = {}
     base_cvr = total_conversions / total_paths
@@ -151,10 +154,18 @@ def first_order(paths):
     for channel in removal_effects.keys():
         markov_conversions[channel] = allocation_amount[i]
         i += 1
-    conv_dict.pop('conv', None)
-    conv_dict.pop('null', None)
-    conv_dict.pop('start', None)
+    conv_dict_last.pop('conv', None)
+    conv_dict_last.pop('null', None)
+    conv_dict_last.pop('start', None)
+    conv_dict_first.pop('conv', None)
+    conv_dict_first.pop('null', None)
+    conv_dict_first.pop('start', None)
 
     return {'markov_conversions': markov_conversions,
-            'last_touch_conversions': conv_dict,
-            'removal_effects': removal_effects}
+            'last_touch_conversions': conv_dict_last,
+            'first_touch_conversions': conv_dict_last,
+            'removal_effects': removal_effects            
+            'base_cvr': base_cvr,
+            'transition_matrix': test_df,
+            'absorption_matrix': M
+           }
